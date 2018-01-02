@@ -1,0 +1,15 @@
+{
+  "name": "asteroids",
+  "version": "1.0.0",
+  "main": "asteroids.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "description": "",
+  "dependencies": {
+    "webpack": "^3.10.0"
+  }
+}
