@@ -1,6 +1,6 @@
 const { Vec2, MathHelper } = require('../math')
 const GameObject = require('./GameObject').default
-const ExhaustItem = require('./ExhaustItem').default
+const ExhaustParticle = require('./ExhaustParticle').default
 
 export default class Player extends GameObject {
   constructor(x, y, width, height) {
@@ -20,14 +20,10 @@ export default class Player extends GameObject {
         controllable: true,
         boundaryBuffer: height / 2
     });
-
-    this.exhausts = [];
-    this.ep = 0;
   }
 
   render(ctx) {
     super.render(ctx);
-    this.exhausts.forEach(e => e.render(ctx));
   }
 
   isCollidingWithAsteroid() {
@@ -44,21 +40,14 @@ export default class Player extends GameObject {
 
   update(ctx) {
     if (window.asteroids.keyboard.forward) {
-        this.exhausts.push(
-            new ExhaustItem(this.vertices[2], -this.r)
+        window.asteroids.exhausts.push(
+            new ExhaustParticle(this.vertices[2], -this.r)
         );
     }
 
     // Main update of acceleration, velocity & rotation.
     super.update(ctx);
     this.applyDrag();
-
-    // Update exhaust particles
-    this.exhausts.forEach(e => e.update(ctx))
-    this.exhausts = this.exhausts.filter(e => !e.isDead);
-
-    // Collision stuff
-    window.asteroids.bg = this.isCollidingWithAsteroid() ? window.asteroids.COLLIDE_BG : window.asteroids.DARK_BG
   }
 
   applyDrag() {
