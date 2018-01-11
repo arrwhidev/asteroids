@@ -10,7 +10,8 @@ export default class ExplosionParticle extends Particle {
             true,
             7,
             Math.random(),
-            0.88
+            0.88,
+            6
         )
     }
 

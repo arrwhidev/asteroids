@@ -3,15 +3,15 @@ const { Vec2, MathHelper } = require('../math')
 // https://coolors.co/ef476f-ffb23c-06d6a0-118ab2-073b4c
 
 export default class Particle {
-    constructor(pos, radians, R, G, B, variance, variancePos, maxWidth, shrink, decay) {
+    constructor(pos, radians, R, G, B, variance, useVarianceInPos, maxWidth, shrink, decay, initialVel=2.5) {
         this.pos = new Vec2(pos.x, pos.y);
         this.variance = variance;
-        this.variancePos = variancePos;
+        this.useVarianceInPos = useVarianceInPos;
         this.radians = radians + this.variance;
         this.isDead = false;
         this.width = Math.random() * maxWidth;
-        this.initialVel = 2.5;
-        this.vel = this.initialVel * 4;
+        this.initialVel = initialVel;
+        this.vel = initialVel;
         this.shrink = shrink / 100;
         this.decay = decay;
         this.r = MathHelper.randomBetween(R - 40, R + 40)
@@ -23,9 +23,10 @@ export default class Particle {
         this.width -= this.shrink;
         this.vel -= this.shrink;
         this.shrink /= this.decay;
+
         this.pos.add(new Vec2(
-            -(this.vel * this.variance * Math.cos(this.radians)),
-            this.vel * this.variance * Math.sin(this.radians)
+            -(this.vel * (this.useVarianceInPos ? this.variance : 1) * Math.cos(this.radians)),
+            this.vel * (this.useVarianceInPos ? this.variance : 1) * Math.sin(this.radians)
         ));
 
         if (this.vel <= 0 || this.width <= 0) {

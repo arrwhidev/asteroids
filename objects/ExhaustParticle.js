@@ -10,7 +10,7 @@ export default class ExhaustParticle extends Particle {
             false,
             5,
             MathHelper.betweenFloat(0.7, 0.9),
-            1
+            0.97
         )
     }
 
