@@ -1,6 +1,7 @@
 const { Vec2, MathHelper } = require('../math')
 const GameObject = require('./GameObject').default
 const ExhaustParticle = require('./ExhaustParticle').default
+const ExplosionParticle = require('./ExplosionParticle').default
 
 export default class Player extends GameObject {
   constructor(x, y, width, height) {
