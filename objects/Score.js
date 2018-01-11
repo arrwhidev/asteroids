@@ -7,9 +7,9 @@ export default class Score {
 
     shotAsteroid({ size }) {
         if (size === 1) this.score += 20
-        if (size === 0.5) this.score += 50
-        if (size === 0.3) this.score += 100
-        if (size === 0.2) this.score += 150
+        else if (size === 0.5) this.score += 50
+        else if (size === 0.3) this.score += 100
+        else if (size === 0.2) this.score += 150
     }
 
     crashedIntoAsteroid() {

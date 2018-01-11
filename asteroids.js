@@ -123,7 +123,7 @@ function update(ctx, delta) {
             )
         }
 
-        // TODO: Player may be on an asteroid, spawn elsewhere.
+        // TODO: Player may spawn on an asteroid, spawn elsewhere.
         window.asteroids.player = new Player(
             ctx.canvas.width / 2,
             ctx.canvas.height / 2,
