@@ -1,4 +1,4 @@
-const { Vec2, MathHelper } = require('../math')
+const { Vec2, MathHelper } = require('../../math')
 const Particle = require('./Particle').default
 
 export default class ExhaustParticle extends Particle {

@@ -1,14 +1,14 @@
-const { Vec2, MathHelper } = require('../math')
+const { Vec2, MathHelper } = require('../../math')
 const Particle = require('./Particle').default
 
 export default class ExplosionParticle extends Particle {
-    constructor(pos, radians) {
+    constructor(pos, radians, R, G, B, maxWidth) {
         super(
             pos, radians,
-            210, 71, 130,
+            R, G, B,
             Math.random(),
             true,
-            7,
+            maxWidth,
             Math.random(),
             0.88,
             6

@@ -9,7 +9,8 @@ const Projectile = require('./objects/Projectile').default
 const Player = require('./objects/Player').default
 const Asteroid = require('./objects/Asteroid').default
 const Score = require('./objects/Score').default
-const ExplosionParticle = require('./objects/ExplosionParticle').default
+const PlayerDiedExplosion = require('./objects/explosion/PlayerDiedExplosion').default
+const DestroyAsteroidExplosion = require('./objects/explosion/DestroyAsteroidExplosion').default
 
 /**/
 
@@ -22,8 +23,8 @@ window.asteroids = {
     bg: '#212121',
     keyboard: new Keyboard(),
     projectiles: [],
+    explosions: [],
     exhausts: [],
-    explosionParticles: [],
     asteroids: [
         new Asteroid(new Vec2(300, 300), 1),
         new Asteroid(new Vec2(450, 800), 1),
@@ -44,11 +45,11 @@ window.asteroids = {
 /**/
 
 function render(ctx) {
-    const { player, asteroids, projectiles, exhausts, explosionParticles, score } = window.asteroids;
+    const { player, asteroids, projectiles, exhausts, explosionParticles, score, explosions } = window.asteroids;
 
     asteroids.forEach(a => a.render(ctx))
     exhausts.forEach(e => e.render(ctx));
-    explosionParticles.forEach(p => p.render(ctx))
+    explosions.forEach(e => e.render(ctx))
     projectiles.forEach(p => p.render(ctx));
 
     if (window.asteroids.pauseFor === 0) {
@@ -58,7 +59,7 @@ function render(ctx) {
 }
 
 function update(ctx, delta) {
-    const { player, asteroids, projectiles, exhausts, explosionParticles } = window.asteroids;
+    const { player, asteroids, projectiles, exhausts, explosionParticles, explosions } = window.asteroids;
 
     if (window.asteroids.pauseFor > 0) {
         window.asteroids.pauseFor--
@@ -69,11 +70,11 @@ function update(ctx, delta) {
     asteroids.forEach(a => a.update(ctx, delta))
     projectiles.forEach(p => p.update(ctx))
     exhausts.forEach(e => e.update(ctx))
-    explosionParticles.forEach(p => p.update(ctx))
+    explosions.forEach(e => e.update(ctx))
 
     // Clean stuff up.
     window.asteroids.exhausts = exhausts.filter(e => !e.isDead);
-    window.asteroids.explosionParticles = explosionParticles.filter(e => !e.isDead);
+    window.asteroids.explosions = explosions.filter(e => !e.isDead);
     window.asteroids.projectiles = projectiles.filter(p => !p.isOOB)
 
     // Projectile / asteroid collisions.
@@ -93,6 +94,13 @@ function update(ctx, delta) {
                     }
                 }
 
+                // Asteroid explosion.
+                window.asteroids.explosions.push(
+                  new DestroyAsteroidExplosion(
+                    asteroids[j].c.clone()
+                  )
+                )
+
                 // Update score.
                 window.asteroids.score.shotAsteroid(asteroids[j]);
 
@@ -111,17 +119,10 @@ function update(ctx, delta) {
         window.asteroids.pauseFor = 20
         window.asteroids.score.crashedIntoAsteroid()
 
-        for (let i = 0; i < 36; i++) {
-            window.asteroids.explosionParticles.push(
-                new ExplosionParticle(window.asteroids.player.c.clone(), i - Math.random())
-            )
-            window.asteroids.explosionParticles.push(
-                new ExplosionParticle(window.asteroids.player.c.clone(), i)
-            )
-            window.asteroids.explosionParticles.push(
-                new ExplosionParticle(window.asteroids.player.c.clone(), i + Math.random())
-            )
-        }
+        // Player explosion.
+        window.asteroids.explosions.push(new PlayerDiedExplosion(
+          window.asteroids.player.c.clone()
+        ))
 
         // TODO: Player may spawn on an asteroid, spawn elsewhere.
         window.asteroids.player = new Player(

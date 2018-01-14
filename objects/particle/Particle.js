@@ -1,4 +1,4 @@
-const { Vec2, MathHelper } = require('../math')
+const { Vec2, MathHelper } = require('../../math')
 
 // https://coolors.co/ef476f-ffb23c-06d6a0-118ab2-073b4c
 
