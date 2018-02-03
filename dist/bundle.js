@@ -870,8 +870,9 @@ class Score {
     }
 
     render(ctx) {
+        const { width, height } = ctx.canvas;
         ctx.fillStyle = "white"
-        ctx.fillText(`Lives: ${this.lives}    Score: ${this.score}`, 20, 40);
+        ctx.fillText(`Lives: ${this.lives}    Score: ${this.score}`, width - 350, 40);
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["default"] = Score;
