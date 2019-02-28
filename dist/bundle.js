@@ -571,7 +571,7 @@ function initCanvas(cb, fullScreen = false) {
 }
 
 
-const { ctx, canvas, togglePause } = initCanvas(tick, true);
+const { ctx, canvas, togglePause } = initCanvas(tick, false);
 ctx.font = FONT
 ctx.lineWidth = 1
 ctx.strokeStyle = "white"
