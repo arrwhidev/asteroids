@@ -532,10 +532,11 @@ function initCanvas(cb, fullScreen = false) {
         if (fullScreen) {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            ctx.font = FONT
-            ctx.lineWidth = 1
-            ctx.strokeStyle = "white"
         }
+
+        ctx.font = FONT
+        ctx.lineWidth = 1
+        ctx.strokeStyle = "white"
     }
 
     // Ensure that the canvas dimensions are updated when window is resized.
