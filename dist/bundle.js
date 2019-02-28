@@ -519,7 +519,7 @@ const FONT = "bolder 24px Montserrat";
 
 function initCanvas(cb, fullScreen = false) {
     // Grab canvas & 2d context.
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('asteroids-canvas');
     const ctx = canvas.getContext("2d");
 
     // Variables required for a smooth throttled loop.
