@@ -1,5 +1,61 @@
-const { ctx, canvas, togglePause } = initCanvas(tick);
-ctx.font = "30px Roboto"
+const FONT = "bolder 24px Montserrat";
+
+function initCanvas(cb, fullScreen = false) {
+    // Grab canvas & 2d context.
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext("2d");
+
+    // Variables required for a smooth throttled loop.
+    let lastTime = 0;
+    let fpsLimit = 100;
+    let delta = 0;
+    let paused = false;
+
+    const updateCanvasSize = () => {
+        if (fullScreen) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.font = FONT
+            ctx.lineWidth = 1
+            ctx.strokeStyle = "white"
+        }
+    }
+
+    // Ensure that the canvas dimensions are updated when window is resized.
+    window.addEventListener('resize', updateCanvasSize, false);
+
+    // Set initial dimensions.
+    updateCanvasSize();
+
+    // Time based tick function.
+    const tick = timestamp => {
+        if (timestamp < lastTime + (1000 / fpsLimit)) {
+            // skip
+        } else {
+            delta = timestamp - lastTime;
+            lastTime = timestamp;
+
+            if (!paused) cb(ctx, delta, canvas.width, canvas.height);
+        }
+
+        window.requestAnimationFrame(tick);
+    }
+
+    // Start loop.
+    window.requestAnimationFrame(tick);
+
+    function togglePause() {
+        paused = !paused;
+    }
+
+    return {
+        canvas, ctx, togglePause
+    };
+}
+
+
+const { ctx, canvas, togglePause } = initCanvas(tick, true);
+ctx.font = FONT
 ctx.lineWidth = 1
 ctx.strokeStyle = "white"
 
@@ -109,7 +165,7 @@ function update(ctx, delta) {
                 window.asteroids.projectiles.splice(i, 1);
 
                 // Done
-                break;
+                break;  
             }
         }
     }
