@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "asteroids.js",
   "scripts": {
-    "start": "webpack"
+    "build": "webpack"
   },
-  "author": "",
+  "author": "Arran White",
   "license": "ISC",
   "keywords": [],
-  "description": "",
+  "description": "A slightly more colourful rewrite of the arcade classic, Asteroids, with particles, for fun.",
   "dependencies": {
     "webpack": "^3.10.0"
   }
