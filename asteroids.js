@@ -200,6 +200,6 @@ window.startAsteroids = () => {
 
 window.killAsteroids = () => {
     window.cancelAnimationFrame(window.animId)
-    window.asteroids = null
+    window.asteroids = {}
     window.animId = null
 }
