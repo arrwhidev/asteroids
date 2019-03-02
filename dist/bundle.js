@@ -510,11 +510,11 @@ function initCanvas(cb, fullScreen = false) {
             if (!paused) cb(ctx, delta, canvas.width, canvas.height);
         }
 
-        window.asteroids.animId = window.requestAnimationFrame(tick);
+        window.animId = window.requestAnimationFrame(tick);
     }
 
     // Start loop.
-    window.asteroids.animId = window.requestAnimationFrame(tick);
+    window.animId = window.requestAnimationFrame(tick);
 
     function togglePause() {
         paused = !paused;
@@ -670,8 +670,9 @@ window.startAsteroids = () => {
 }
 
 window.killAsteroids = () => {
-    window.cancelAnimationFrame(window.asteroids.animId)
-    window.asteroids = null
+    window.cancelAnimationFrame(window.animId)
+    window.asteroids = {}
+    window.animId = null
 }
 
 /***/ }),

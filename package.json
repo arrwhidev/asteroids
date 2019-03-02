@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "asteroids.js",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "start": "webpack --watch"
   },
   "author": "Arran White",
   "license": "ISC",
