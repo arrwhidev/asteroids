@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -341,52 +341,6 @@ class GameObject {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-const { Vec2 } = __webpack_require__(0)
-const GameObject = __webpack_require__(1).default
-
-class Projectile extends GameObject {
-  constructor(pos, radians) {
-    super({
-        r: radians,
-        c: new Vec2(pos.x, pos.y)
-    })
-    this.isOOB = false;
-  }
-
-  updateVelocity() {
-      this.vel.x = 8 * Math.cos(this.r);
-      this.vel.y = 8 * Math.sin(this.r);
-  }
-
-  update(ctx) {
-      super.update(ctx);
-      this.updateVelocity();
-
-        if (this.c.x > ctx.canvas.width ||
-            this.c.x < 0 ||
-            this.c.y > ctx.canvas.height ||
-            this.c.y < 0) {
-            this.isOOB = true;
-        }
-  }
-
-  render(ctx) {
-    ctx.fillStyle = "white";
-    ctx.beginPath();
-    ctx.arc(this.c.x, this.c.y, 2, 0, 2 * Math.PI, false);
-    ctx.fill();
-  }
-}
-/* harmony export (immutable) */ __webpack_exports__["default"] = Projectile;
-
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 const { Vec2, MathHelper } = __webpack_require__(0)
 
 // https://coolors.co/ef476f-ffb23c-06d6a0-118ab2-073b4c
@@ -436,7 +390,7 @@ class Particle {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -477,13 +431,13 @@ class Explosion {
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 const { Vec2, MathHelper } = __webpack_require__(0)
-const Particle = __webpack_require__(3).default
+const Particle = __webpack_require__(2).default
 
 class ExplosionParticle extends Particle {
     constructor(pos, radians, R, G, B, maxWidth) {
@@ -512,7 +466,7 @@ class ExplosionParticle extends Particle {
 
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const FONT = "bolder 24px Montserrat";
@@ -571,158 +525,157 @@ function initCanvas(cb, fullScreen = false) {
     };
 }
 
-
-const { ctx, canvas, togglePause } = initCanvas(tick, false);
-ctx.font = FONT
-ctx.lineWidth = 1
-ctx.strokeStyle = "white"
-
-const { Vec2, MathHelper } = __webpack_require__(0)
-const Keyboard = __webpack_require__(7).default
-const Projectile = __webpack_require__(2).default
-const Player = __webpack_require__(8).default
-const Asteroid = __webpack_require__(10).default
-const Score = __webpack_require__(11).default
-const PlayerDiedExplosion = __webpack_require__(12).default
-const DestroyAsteroidExplosion = __webpack_require__(13).default
-
-/**/
-
-window.asteroids = {
-    MAX_ROTATION: 6.28319,
-    MAX_ACCELERATION: 1,
-    ACCELERATION_INC: 0.05,
-    DARK_BG: '#212121',
-    COLLIDE_BG: '#b26057',
-    bg: '#212121',
-    keyboard: new Keyboard(),
-    projectiles: [],
-    explosions: [],
-    exhausts: [],
-    asteroids: [
-        new Asteroid(new Vec2(300, 300), 1),
-        new Asteroid(new Vec2(450, 800), 1),
-        new Asteroid(new Vec2(700, 200), 1),
-        new Asteroid(new Vec2(900, 900), 1),
-        new Asteroid(new Vec2(1000, 400), 1)
-    ],
-    player: new Player(
-        ctx.canvas.width / 2,
-        ctx.canvas.height / 2,
-        20,
-        20
-    ),
-    score: new Score(),
-    pauseFor: 0
-}
-
-/**/
-
-function render(ctx) {
-    const { player, asteroids, projectiles, exhausts, explosionParticles, score, explosions } = window.asteroids;
-
-    asteroids.forEach(a => a.render(ctx))
-    exhausts.forEach(e => e.render(ctx));
-    explosions.forEach(e => e.render(ctx))
-    projectiles.forEach(p => p.render(ctx));
-
-    if (window.asteroids.pauseFor === 0) {
-        player.render(ctx)
-    }
-    score.render(ctx);
-}
-
-function update(ctx, delta) {
-    const { player, asteroids, projectiles, exhausts, explosionParticles, explosions } = window.asteroids;
-
-    if (window.asteroids.pauseFor > 0) {
-        window.asteroids.pauseFor--
-    } else {
-        player.update(ctx, delta)
-    }
-
-    asteroids.forEach(a => a.update(ctx, delta))
-    projectiles.forEach(p => p.update(ctx))
-    exhausts.forEach(e => e.update(ctx))
-    explosions.forEach(e => e.update(ctx))
-
-    // Clean stuff up.
-    window.asteroids.exhausts = exhausts.filter(e => !e.isDead);
-    window.asteroids.explosions = explosions.filter(e => !e.isDead);
-    window.asteroids.projectiles = projectiles.filter(p => !p.isOOB)
-
-    // Projectile / asteroid collisions.
-    for(let i = 0; i < projectiles.length; i++) {
-        for(let j = 0; j < asteroids.length; j++) {
-            const didCollide = MathHelper.isInPolygon(asteroids[j], projectiles[i].c);
-            if (didCollide) {
-                if (asteroids[j].canBreak) {
-                    if (asteroids[j].size === 1) {
-                        asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.5))
-                        asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.5))
-                        asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.3))
-                    } else {
-                        asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.3))
-                        asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.2))
-                        asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.2))
-                    }
-                }
-
-                // Asteroid explosion.
-                window.asteroids.explosions.push(
-                  new DestroyAsteroidExplosion(
-                    asteroids[j].c.clone()
-                  )
-                )
-
-                // Update score.
-                window.asteroids.score.shotAsteroid(asteroids[j]);
-
-                // Delete old asteroid and projectile.
-                window.asteroids.asteroids.splice(j, 1);
-                window.asteroids.projectiles.splice(i, 1);
-
-                // Done
-                break;  
-            }
-        }
-    }
-
-    // Player collisions.
-    if (player.isCollidingWithAsteroid()) {
-        window.asteroids.pauseFor = 20
-        window.asteroids.score.crashedIntoAsteroid()
-
-        // Player explosion.
-        window.asteroids.explosions.push(new PlayerDiedExplosion(
-          window.asteroids.player.c.clone()
-        ))
-
-        // TODO: Player may spawn on an asteroid, spawn elsewhere.
-        window.asteroids.player = new Player(
+window.startAsteroids = () => {
+    const { ctx } = initCanvas(tick, false);
+    ctx.font = FONT
+    ctx.lineWidth = 1
+    ctx.strokeStyle = "white"
+    
+    const { Vec2, MathHelper } = __webpack_require__(0)
+    const Keyboard = __webpack_require__(6).default
+    const Player = __webpack_require__(8).default
+    const Asteroid = __webpack_require__(10).default
+    const Score = __webpack_require__(11).default
+    const PlayerDiedExplosion = __webpack_require__(12).default
+    const DestroyAsteroidExplosion = __webpack_require__(13).default
+    
+    /**/
+    
+    window.asteroids = {
+        MAX_ROTATION: 6.28319,
+        MAX_ACCELERATION: 1,
+        ACCELERATION_INC: 0.05,
+        DARK_BG: '#212121',
+        COLLIDE_BG: '#b26057',
+        bg: '#212121',
+        keyboard: new Keyboard(),
+        projectiles: [],
+        explosions: [],
+        exhausts: [],
+        asteroids: [
+            new Asteroid(new Vec2(300, 300), 1),
+            new Asteroid(new Vec2(450, 800), 1),
+            new Asteroid(new Vec2(700, 200), 1),
+            new Asteroid(new Vec2(900, 900), 1),
+            new Asteroid(new Vec2(1000, 400), 1)
+        ],
+        player: new Player(
             ctx.canvas.width / 2,
             ctx.canvas.height / 2,
             20,
             20
-        )
+        ),
+        score: new Score(),
+        pauseFor: 0
+    }
+    
+    /**/
+    
+    function render(ctx) {
+        const { player, asteroids, projectiles, exhausts, explosionParticles, score, explosions } = window.asteroids;
+    
+        asteroids.forEach(a => a.render(ctx))
+        exhausts.forEach(e => e.render(ctx));
+        explosions.forEach(e => e.render(ctx))
+        projectiles.forEach(p => p.render(ctx));
+    
+        if (window.asteroids.pauseFor === 0) {
+            player.render(ctx)
+        }
+        score.render(ctx);
+    }
+    
+    function update(ctx, delta) {
+        const { player, asteroids, projectiles, exhausts, explosionParticles, explosions } = window.asteroids;
+    
+        if (window.asteroids.pauseFor > 0) {
+            window.asteroids.pauseFor--
+        } else {
+            player.update(ctx, delta)
+        }
+    
+        asteroids.forEach(a => a.update(ctx, delta))
+        projectiles.forEach(p => p.update(ctx))
+        exhausts.forEach(e => e.update(ctx))
+        explosions.forEach(e => e.update(ctx))
+    
+        // Clean stuff up.
+        window.asteroids.exhausts = exhausts.filter(e => !e.isDead);
+        window.asteroids.explosions = explosions.filter(e => !e.isDead);
+        window.asteroids.projectiles = projectiles.filter(p => !p.isOOB)
+    
+        // Projectile / asteroid collisions.
+        for(let i = 0; i < projectiles.length; i++) {
+            for(let j = 0; j < asteroids.length; j++) {
+                const didCollide = MathHelper.isInPolygon(asteroids[j], projectiles[i].c);
+                if (didCollide) {
+                    if (asteroids[j].canBreak) {
+                        if (asteroids[j].size === 1) {
+                            asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.5))
+                            asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.5))
+                            asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.3))
+                        } else {
+                            asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.3))
+                            asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.2))
+                            asteroids.push(new Asteroid(projectiles[i].c.clone(), 0.2))
+                        }
+                    }
+    
+                    // Asteroid explosion.
+                    window.asteroids.explosions.push(
+                      new DestroyAsteroidExplosion(
+                        asteroids[j].c.clone()
+                      )
+                    )
+    
+                    // Update score.
+                    window.asteroids.score.shotAsteroid(asteroids[j]);
+    
+                    // Delete old asteroid and projectile.
+                    window.asteroids.asteroids.splice(j, 1);
+                    window.asteroids.projectiles.splice(i, 1);
+    
+                    // Done
+                    break;  
+                }
+            }
+        }
+    
+        // Player collisions.
+        if (player.isCollidingWithAsteroid()) {
+            window.asteroids.pauseFor = 20
+            window.asteroids.score.crashedIntoAsteroid()
+    
+            // Player explosion.
+            window.asteroids.explosions.push(new PlayerDiedExplosion(
+              window.asteroids.player.c.clone()
+            ))
+    
+            // TODO: Player may spawn on an asteroid, spawn elsewhere.
+            window.asteroids.player = new Player(
+                ctx.canvas.width / 2,
+                ctx.canvas.height / 2,
+                20,
+                20
+            )
+        }
+    }
+    
+    function tick(ctx, delta) {
+        ctx.fillStyle = window.asteroids.bg;
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        update(ctx, delta);
+        render(ctx)
     }
 }
 
-function tick(ctx, delta) {
-    ctx.fillStyle = window.asteroids.bg;
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    update(ctx, delta);
-    render(ctx)
-}
-
-
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-const Projectile = __webpack_require__(2).default
+const Projectile = __webpack_require__(7).default
 
 const RIGHT = 39
 const LEFT = 37
@@ -748,6 +701,52 @@ class Keyboard {
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["default"] = Keyboard;
+
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+const { Vec2 } = __webpack_require__(0)
+const GameObject = __webpack_require__(1).default
+
+class Projectile extends GameObject {
+  constructor(pos, radians) {
+    super({
+        r: radians,
+        c: new Vec2(pos.x, pos.y)
+    })
+    this.isOOB = false;
+  }
+
+  updateVelocity() {
+      this.vel.x = 8 * Math.cos(this.r);
+      this.vel.y = 8 * Math.sin(this.r);
+  }
+
+  update(ctx) {
+      super.update(ctx);
+      this.updateVelocity();
+
+        if (this.c.x > ctx.canvas.width ||
+            this.c.x < 0 ||
+            this.c.y > ctx.canvas.height ||
+            this.c.y < 0) {
+            this.isOOB = true;
+        }
+  }
+
+  render(ctx) {
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(this.c.x, this.c.y, 2, 0, 2 * Math.PI, false);
+    ctx.fill();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["default"] = Projectile;
 
 
 
@@ -825,7 +824,7 @@ class Player extends GameObject {
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 const { Vec2, MathHelper } = __webpack_require__(0)
-const Particle = __webpack_require__(3).default
+const Particle = __webpack_require__(2).default
 
 class ExhaustParticle extends Particle {
     constructor(pos, radians) {
@@ -942,8 +941,8 @@ class Score {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-const Explosion = __webpack_require__(4).default
-const ExplosionParticle = __webpack_require__(5).default
+const Explosion = __webpack_require__(3).default
+const ExplosionParticle = __webpack_require__(4).default
 
 const R = 210
 const G = 71
@@ -965,8 +964,8 @@ class PlayerDiedExplosion extends Explosion {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-const Explosion = __webpack_require__(4).default
-const ExplosionParticle = __webpack_require__(5).default
+const Explosion = __webpack_require__(3).default
+const ExplosionParticle = __webpack_require__(4).default
 
 const R = 200
 const G = 255
