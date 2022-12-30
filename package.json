@@ -11,6 +11,6 @@
   "keywords": [],
   "description": "A slightly more colourful rewrite of the arcade classic, Asteroids, with particles, for fun.",
   "dependencies": {
-    "webpack": "^3.10.0"
+    "webpack": "^5.75.0"
   }
 }
